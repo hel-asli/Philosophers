@@ -6,11 +6,11 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/07/18 05:32:12 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/07 04:43:15 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../philo.h"
 # define NUM_THREADS 2
 
 // the main function it self is a routine executed in the main thread . 
@@ -79,101 +79,64 @@
 // all threads in a single process have access to the same ps components , such as fds and memory .
 // errno is a global variable int use a syscall to specifiy the error that let this syscall fail . 
 // for thread the errno is unique for each thread . 
-void err_exit(int err, char *str)
-{ 
-	fprintf(stderr, "%d\t%s", err, str);
-	exit(EXIT_FAILURE);
-}
-void *print_hello(void *thread_id)
+
+// void *routine(void *arg)
+// {
+// 	int n = *(int *)arg; 
+// 	for (int i = 0; i < n; i++)
+// 	{
+// 		printf("hello world\n");
+// 	}
+// 	*(int *)arg = 42;
+// 	int *a = malloc(sizeof(int));
+// 	*a = 1337;
+// 	fprintf(stderr, "tid : %lu\n", (unsigned long)pthread_self());
+
+// 	return (a);
+// }
+
+// void *routinev2(void *arg)
+// {
+// 	pthread_t *t = arg;
+// 	pthread_cancel(*t);
+// 	fprintf(stderr, "%lu --> cancel from %lu\n", (unsigned long)(*t), (unsigned long)pthread_self());
+// 	return (NULL);
+// }
+
+void *siham(void *arg)
 {
-	long tid = (long)thread_id;
-
-	printf("hello from thread %ld\n", tid);
-	pthread_exit(NULL);
+	while (1)
+	{
+		printf("hamza hmar\n");
+	}
+	return (arg);
 }
 
-int n = 3;
-
-void *print_num(void *arg)
+void *hamza(void *arg)
 {
-	(void)arg;
-	n = 42;	
-	sleep(2);
-	printf("*** : %d\n", n);
-	return (NULL);
+	while(1)
+	{
+		printf("ook\n");
+	}
+	return (arg);
 }
 
-void *print_n(void *arg)
-{
-	(void)arg;
-	sleep(2);
-	printf("*** : %d\n", n);
-	return (NULL);
-}
+// why i can change a local variable that declared in the main thread in another routine &&
+// i can'teturn a pointer to var that is declared staticly ?
+// 
 
-void *run(void *arg)
-{
-	int *a = (int *)arg;
-	printf("THREAD: runing thread with arg %d\n", *a);
-	sleep(2);
-
-	return (NULL);
-}
-void print_ids(const char *s)
-{
-	pid_t pid;
-	pthread_t tid;
-
-	pid = getpid();
-	tid = pthread_self();
-	printf("%s pid\t %d tid\t%lu 0x%lx\n", s, pid, (unsigned long)tid, (unsigned long)tid);
-}
-void *thr_fun(void *arg)
-{
-	(void)arg;
-	// pthread_exit(arg);
-	print_ids("new thread : ");
-	return ((void *)0);
-}
-
-void lek(void)
-{
-	system("leaks -c philo");
-}
-
-void voidd(int si)
-{
-	(void)si;
-	system("leaks -c philo");
-}
 int	main(int ac, char **av)
 {
+	pthread_t t[2];
+	(void)av;
 	(void)ac;
-	// what is pthread_t ? 
-	pthread_t threads[2];
-	void	*ret;
-	int		err;
-	char	*ptr;
-
-	atexit(lek);
-	for(int i = 0; i < 2; i++)
-	{
-		err = pthread_create(&threads[i], NULL, thr_fun, av[1]);
-		if (err != 0)
-			err_exit(err, "can't creaet thread");
-	}
-	for (int i = 0; i < 2; i++)
-	{
-		pthread_join(threads[i], &ret);
-		printf("tid :\t%lu\treturn value of the thread_func is :\t%s\n", (unsigned long)threads[i], ret);
-	}
-	ptr = malloc(sizeof(char *) * 4);
-	// when we use exit _exit || _Exit a signal is sent to a thread will terminate the entire process.
-	// NULL
-	// the sizeof pthread_t can vary between systems . 
-	// it can be int or long or struct => we use pthread_equal to compare two thread ids . 
-	// pthread_t is an opaque data ty
-	// 0 if ok , err number on failure .
-	signal(SIGQUIT, voidd);
-	pthread_exit(NULL);
+	// if (ac != 6)
+	// 	fprintf(stderr, "args prb\n");
+	
+	pthread_create(&t[0], NULL, hamza, NULL);
+	pthread_create(&t[1], NULL, siham, NULL);
+	pthread_join(t[0], 	NULL); // this mean the wait for thread to finish before continue .  pthread_join(t[1], NULL);
+	pthread_join(t[1], NULL);
+	// pthread_detach(t); // this means the thread runs independently and is not joined .
+	
 }
