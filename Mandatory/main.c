@@ -6,11 +6,12 @@
 /*   By: hamza <hamza@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/16 03:00:14 by hamza            ###   ########.fr       */
+/*   Updated: 2024/11/16 12:23:54 by hamza            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
+#include <string.h>
 
 // the main function it self is a routine executed in the main thread . 
 	/* <-- pthread_create() -->
@@ -149,6 +150,8 @@ int check_str(char *str)
 	int i = 0;
 	while (str[i] && is_space(str[i]))
 		i++;
+	if (!str[i])
+		return (1);
 	if (str[i] == '+')
 		i++;
 	while (str[i])
@@ -163,6 +166,24 @@ int check_str(char *str)
 	return (0);
 }
 
+int only_plus(char *str)
+{
+	size_t i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (is_space(str[i]) || str[i] == '+')
+			i++;
+		else
+			break;
+	}
+
+	if (i == strlen(str))
+		return (1);
+	return (0);
+}
+
 
 int check_args(char **av)
 {
@@ -170,7 +191,7 @@ int check_args(char **av)
 
 	while (av[i])
 	{
-		if (check_str(av[i]) || count_words(av[i]) > 1)
+		if (check_str(av[i]) || count_words(av[i]) > 1 || only_plus(av[i])) // only space
 		{
 			return (1);
 		}
