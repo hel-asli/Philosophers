@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hamza <hamza@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/16 12:23:54 by hamza            ###   ########.fr       */
+/*   Updated: 2024/11/16 16:26:34 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ int check_str(char *str)
 		}
 		i++;
 	}
-	// "   +    "
 	return (0);
 }
 
@@ -191,7 +190,7 @@ int check_args(char **av)
 
 	while (av[i])
 	{
-		if (check_str(av[i]) || count_words(av[i]) > 1 || only_plus(av[i])) // only space
+		if (check_str(av[i]) || count_words(av[i]) > 1 || only_plus(av[i]))
 		{
 			return (1);
 		}
@@ -202,24 +201,14 @@ int check_args(char **av)
 
 int	main(int ac, char **av)
 {
-	// pthread_t t[2];
-	(void)av;
-	(void)ac;
 	if (ac < 5 || ac > 6)
 	{
 		fprintf(stderr, "%s\n", ERR_MSG);
 		return (1);
 	}
-
 	if (check_args(++av))
 	{
 		fprintf(stderr, "Error: Arg not valid\n");
 		return (1);
 	}
-	// pthread_create(&t[0], NULL, hamza, NULL);
-	// pthread_create(&t[1], NULL, siham, NULL);
-	// pthread_join(t[0], 	NULL); // this mean the wait for thread to finish before continue .  pthread_join(t[1], NULL);
-	// pthread_join(t[1], NULL);
-	// pthread_detach(t); // this means the thread runs independently and is not joined .
-	
 }
