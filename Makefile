@@ -1,7 +1,7 @@
 NAME = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-LDFLAGS = -fsanitize=thread -g
+LDFLAGS = #-fsanitize=thread 
 MFOLDER = Mandatory
 RM = rm -f
 MSRCS = $(MFOLDER)/main.c 
