@@ -1,13 +1,15 @@
 NAME = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-LDFLAGS = #-fsanitize=thread 
+LDFLAGS = -fsanitize=thread -lpthread
 MFOLDER = Mandatory
+USER = $(shell uname)
 RM = rm -f
 MSRCS = $(MFOLDER)/main.c 
 MOBJS = ${MSRCS:.c=.o}
 
 all : $(MFOLDER)/$(NAME)
+
 
 $(MFOLDER)/%.o : $(MFOLDER)/%.c philo.h
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -18,6 +20,7 @@ $(MFOLDER)/$(NAME) : $(MOBJS)
 	@ln -s $@ $(NAME)
 
 clean :
+	@echo $(LDFLAGS)
 	$(RM) $(MOBJS)
 
 fclean : clean

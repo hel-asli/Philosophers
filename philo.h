@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hamza <hamza@student.42.fr>                +#+  +:+       +#+        */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/16 02:34:45 by hamza            ###   ########.fr       */
+/*   Updated: 2024/11/18 01:48:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,22 @@ Usage: ./philosophers number_of_philosophers\
 # include <unistd.h>
 # include <pthread.h>
 # include <stdbool.h>
+
+typedef struct s_philo
+{
+	pthread_t tid;
+	int		philo_id;
+} t_philo;
+
+typedef struct s_data
+{
+	size_t	nb_philos;
+	size_t	time_die;
+	size_t	time_eat;
+	size_t	time_sleep;
+	size_t	nb_must_eat;
+	t_philo *philo;
+	pthread_mutex_t *forks;
+} t_data;
 
 #endif

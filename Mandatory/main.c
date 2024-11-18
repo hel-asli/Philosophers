@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/16 16:26:34 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/18 00:49:09 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,6 +201,7 @@ int check_args(char **av)
 
 int	main(int ac, char **av)
 {
+
 	if (ac < 5 || ac > 6)
 	{
 		fprintf(stderr, "%s\n", ERR_MSG);
