@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/18 00:49:09 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/18 16:19:04 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,25 @@ int count_words(char *str)
 	return (w);
 }
 
+size_t ft_atoi(char *str)
+{
+	int i = 0;
+	size_t r;
+
+	r = 0;
+	while (str[i] && is_space(str[i]))
+		i++;	
+	if (str[i] == '+')
+		i++;
+	while (str[i] && str[i] >= '0' && str[i] <= '9')
+	{
+		r = r * 10 + (str[i] - 48) ;
+		i++;
+	}
+
+	return (r);
+}
+
 int check_str(char *str)
 {
 	int i = 0;
@@ -199,9 +218,39 @@ int check_args(char **av)
 	return (0);
 }
 
+int data_init(t_data *data, char **av, int ac)
+{
+	data->nb_philos = ft_atoi(av[0]);
+	data->time_die = ft_atoi(av[1]);
+	data->time_eat = ft_atoi(av[2]);
+	data->time_sleep = ft_atoi(av[3]);
+	if (!data->nb_philos || !data->time_die || !data->time_eat || !data->time_sleep)
+	{
+		fprintf(stderr, "00000000\n");
+		data->exit_status = 1;
+		return (0);
+	}
+	if (ac == 6)
+	{
+		data->nb_must_eat = ft_atoi(av[4]);
+		if (!data->nb_must_eat)
+		{
+			data->exit_status = 1;
+			fprintf(stderr, "00000000\n");
+			return (0);
+		}
+	}
+	else
+		data->nb_must_eat = 0;
+
+	return (1);
+}
+
 int	main(int ac, char **av)
 {
+	t_data data;
 
+	memset(&data, 0, sizeof(t_data));
 	if (ac < 5 || ac > 6)
 	{
 		fprintf(stderr, "%s\n", ERR_MSG);
@@ -212,4 +261,10 @@ int	main(int ac, char **av)
 		fprintf(stderr, "Error: Arg not valid\n");
 		return (1);
 	}
+	if (data_init(&data, av, ac))
+	{
+		printf("program start");
+	}
+
+	return (data.exit_status);
 }

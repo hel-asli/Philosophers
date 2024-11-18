@@ -2,7 +2,7 @@
 #include <string.h>
 #include <sys/errno.h>
 #include <sys/time.h>
-# define NUMS 8
+# define NUMS 1
 #include <stdatomic.h>
 
 
@@ -18,7 +18,7 @@
 pthread_mutex_t lock; 
 pthread_mutex_t water_lock; 
 
-int coffe = 2;
+int coffe = 1;
 int water = 2;
 
 #define YELLOW "\e[1;33m"
@@ -26,22 +26,11 @@ int water = 2;
 
 void *routine(void *arg)
 {
-	if (rand() % 2 == 0)
-	{
-		pthread_mutex_lock(&lock);
-		sleep(1);
-		pthread_mutex_lock(&water_lock);
-	}
-	else
-	{
-		pthread_mutex_lock(&water_lock);
-		sleep(1);
-		pthread_mutex_lock(&lock);
-	}
-	coffe += 2;
-	water = coffe;
+	printf("thread - %d\n", coffe);
+	pthread_mutex_lock(&lock);
+	coffe++;
 	pthread_mutex_unlock(&lock);
-	pthread_mutex_unlock(&water_lock);
+	printf("thread - %d\n", coffe);
 	return (NULL);
 }
 
@@ -58,16 +47,10 @@ size_t get_current_time(void)
 }
 
 
-void **ft(void)
-{
-	char **ptr = malloc(sizeof(char*) * 6);
 
-	return (&ptr);
-}
 
 int main(int ac, char *av[])
 {
-	char **p = ft();
 	pthread_t t[NUMS];
 	pthread_mutex_init(&lock, NULL);
 	pthread_mutex_init(&water_lock, NULL);

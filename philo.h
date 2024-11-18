@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/18 01:48:48 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/18 16:14:22 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_data
 	size_t	time_eat;
 	size_t	time_sleep;
 	size_t	nb_must_eat;
+	int		exit_status;
 	t_philo *philo;
 	pthread_mutex_t *forks;
 } t_data;
