@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/18 22:14:48 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/18 23:28:26 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,23 +87,24 @@ size_t ft_atoi(char *str)
 		r = r * 10 + (str[i] - 48) ;
 		i++;
 	}
-
 	return (r);
 }
 
 int check_str(char *str)
 {
 	int i = 0;
-	while (str[i] && is_space(str[i]))
-		i++;
-	if (!str[i])
-		return (1);
 	if (str[i] == '+')
 		i++;
+	if (!str[i])
+	{
+		fprintf(stderr, "Error: Arg not valid\n");
+		return (1);
+	}
 	while (str[i])
 	{
-		if (!(str[i] >= '0' && str[i] <= '9') && !is_space(str[i]))
+		if (!(str[i] >= '0' && str[i] <= '9'))
 		{
+			fprintf(stderr, "Error: Arg not valid\n");
 			return (1);
 		}
 		i++;
@@ -129,6 +130,32 @@ int only_plus(char *str)
 	return (0);
 }
 
+int check_digits(char *str)
+{
+	int i;
+	int	nb_digits;
+
+	i = 0;
+
+	nb_digits = 0;
+	if (str[i] == '+')
+		i++;
+	while (str[i] && str[i] == '0')
+		i++;
+	while (str[i] && str[i] >= '0' && str[i] <= '9')
+	{
+		nb_digits++;
+		i++;
+	}
+
+	if (nb_digits >= 12)
+	{
+		fprintf(stderr, "number to big\n");
+		return (1);
+	}
+	return (0);
+}
+
 
 int check_args(char **av)
 {
@@ -136,7 +163,7 @@ int check_args(char **av)
 
 	while (av[i])
 	{
-		if (check_str(av[i]) || count_words(av[i]) > 1 || only_plus(av[i]))
+		if (check_str(av[i]) || check_digits(av[i]))
 		{
 			return (1);
 		}
@@ -148,9 +175,9 @@ int check_args(char **av)
 int data_init(t_data *data, char **av, int ac)
 {
 	data->nb_philos = ft_atoi(av[0]);
-	if (!data->nb_philos)
+	if (!data->nb_philos || data->nb_philos > 200)
 	{
-		fprintf(stderr, "0 philo");
+		fprintf(stderr, "number_of_philosophers not valid\n");
 		data->exit_status = 1;
 		return (0);
 	}
@@ -169,7 +196,7 @@ int data_init(t_data *data, char **av, int ac)
 		if (!data->nb_must_eat)
 		{
 			data->exit_status = 1;
-			fprintf(stderr, "0 nb_must_eat\n");
+			fprintf(stderr, "number_of_times_each_philosopher_must_eat not valid\n");
 			return (0);
 		}
 	}
@@ -267,7 +294,6 @@ int	main(int ac, char **av)
 	}
 	if (check_args(++av))
 	{
-		fprintf(stderr, "Error: Arg not valid\n");
 		return (1);
 	}
 	if (data_init(&data, av, ac))
