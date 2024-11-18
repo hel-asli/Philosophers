@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/18 16:14:22 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/18 21:15:56 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,15 @@ Usage: ./philosophers number_of_philosophers\
 # include <pthread.h>
 # include <stdbool.h>
 
+# define FAILURE 1
+# define SUCESS 0
+
 typedef struct s_philo
 {
 	pthread_t tid;
 	int		philo_id;
+	pthread_mutex_t *left_fork;
+	pthread_mutex_t *right_fork;
 } t_philo;
 
 typedef struct s_data

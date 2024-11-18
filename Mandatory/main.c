@@ -6,79 +6,14 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/18 16:19:04 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/18 22:14:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
 #include <string.h>
 
-// the main function it self is a routine executed in the main thread . 
-	/* <-- pthread_create() -->
-	 * pthread_create is a func is used to create a thread with in a process  .
-	 int pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void *), void *arg)
-	 thread ==> a pointer to a pthread_t var that will store the thread id . 
-	 attr ==> A pointer to pthread_d attr that specify attr , can be NULL for default val. 
-	 routine ==> a pointer to func that return (void *) and take (void *) as param .
-	 arg ==> void pointer for arg to pass to routing func . 
-	*/
-	// the thread terminate in one of those three cases : 
-	// use pthread_exit() 
-	// return from routine 
-	// cancel from another thread use pthread_cancel
-/** <------ Processes ------>
- *  A process is a program under execution with own memory space (vm)
- *  Processes are isolated from each other and don't share memory directly
- *  Each process has its own Process Control Block (PCB) in os.
- * 	Inter-process communication (IPC) is relatively expensive : 
- *   1 -> IPC mechanisms allow processes to communicate and synchronize their action when needed .
- *   2 -> PIPES, 
-**/
-// A process can have multiple thread but the first called the main thread . 
-// --- > single threaded process and multi threading process . 
-// like process threads are used by apps to perform multiple tasks concurrently 
-// the threads are tracked using a virtual address on the text and code segment 
-// thread a segment of a process . 
 
-// pthread (posix thread)let you create and manage threads 
-// posix => portable operating system interface
-// what is cores ? 
-/**
- * the cpu (central processing uint) can execute millions of instruction per second - but one instruction at a time . --> with physical cores 
- * hyperthreading ==> a singal physical core appears as multiple physical cores , making the os think there is more cores than actualy exists useing (virtual cores)
- * 
-**/
-
-// google chrome each tab is a isolated process , web servers are use process to seperate each communication with childs . 
-// but this approch is still time and resource consuming even with optimization thechnique 
-// ---> the threads solve those two issues because of (shared memory || global memory (data segment and heap)) (cpu = centeral processing unit). 
-// ---> threads creation is faster than process creation 10x . 
-// ---> threds are created using the clone system call . many of attr that must be dup for child ps instead are shared between threads .
-// ---> you can wait for a thread to continue execution of the passed function , this is called joining .
-// ---> if you don't care when the thread completes and don't want to wait, you can detach it. 
-// * COW (copy on write) is not required for threads . 
-/* ---- threads share ===> :
-	* open file descriptors .
-	* signal dispoitions . 
-	* interval timers (setitimer(), timer_create())
-	* resource limits . 
-*/
-/*
-	--- threads unique attr
-	* thread id
-	* signal mask .
-	* errno variable .
-	* stack  
-*/
-// posix threads api .
-// pthreads data_type : 
-/*
- pthread_t => thread identififer
- ...
-*/
-// all threads in a single process have access to the same ps components , such as fds and memory .
-// errno is a global variable int use a syscall to specifiy the error that let this syscall fail . 
-// for thread the errno is unique for each thread . 
 
 // void *routine(void *arg)
 // {
@@ -103,27 +38,19 @@
 // 	return (NULL);
 // }
 
-void *siham(void *arg)
-{
-	while (1)
-	{
-		printf("hamza hmar\n");
-	}
-	return (arg);
-}
-
-void *hamza(void *arg)
-{
-	while(1)
-	{
-		printf("ook\n");
-	}
-	return (arg);
-}
 
 // why i can change a local variable that declared in the main thread in another routine &&
 // i can'teturn a pointer to var that is declared staticly ?
 // 
+
+void *philo_routine(void *arg)
+{
+	t_data *data;
+
+	data = (t_data *)arg;
+	printf("hello from philo number :%d\n", data->philo->philo_id);
+	return (arg);
+}
 bool is_space(char c)
 {
 	return (c == ' ' || c == '\t');
@@ -221,12 +148,18 @@ int check_args(char **av)
 int data_init(t_data *data, char **av, int ac)
 {
 	data->nb_philos = ft_atoi(av[0]);
+	if (!data->nb_philos)
+	{
+		fprintf(stderr, "0 philo");
+		data->exit_status = 1;
+		return (0);
+	}
 	data->time_die = ft_atoi(av[1]);
 	data->time_eat = ft_atoi(av[2]);
 	data->time_sleep = ft_atoi(av[3]);
-	if (!data->nb_philos || !data->time_die || !data->time_eat || !data->time_sleep)
+	if (data->time_die < 60 || data->time_eat < 60 || data->time_sleep < 60)
 	{
-		fprintf(stderr, "00000000\n");
+		fprintf(stderr, "time must be >= 60");
 		data->exit_status = 1;
 		return (0);
 	}
@@ -236,7 +169,7 @@ int data_init(t_data *data, char **av, int ac)
 		if (!data->nb_must_eat)
 		{
 			data->exit_status = 1;
-			fprintf(stderr, "00000000\n");
+			fprintf(stderr, "0 nb_must_eat\n");
 			return (0);
 		}
 	}
@@ -244,6 +177,82 @@ int data_init(t_data *data, char **av, int ac)
 		data->nb_must_eat = 0;
 
 	return (1);
+}
+
+void destory_mutex(t_data *data, size_t i)
+{
+	size_t	j;
+
+	j = 0;
+	while (j < i)
+	{
+		pthread_mutex_destroy(&data->forks[j]);
+		j++;
+	}
+}
+
+int fork_mutex_init(t_data *data)
+{
+	size_t				i;
+
+	data->forks = malloc(sizeof(pthread_mutex_t) * data->nb_philos);
+	if (!data->forks)
+		return (1);
+	i = 0;
+	while (i < data->nb_philos)
+	{
+		if (pthread_mutex_init(&data->forks[i], NULL))
+		{
+			destory_mutex(data, i);
+			free(data->forks);
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+int philo_create(t_data *data)
+{
+	size_t i;
+
+	i = 0;
+	data->philo = malloc(sizeof(t_philo) * data->nb_philos);
+	if (!data->philo)
+	{
+		destory_mutex(data, data->nb_philos);
+		free(data->forks);
+		return (1);
+	}
+	while (i < data->nb_philos)
+	{
+		data->philo->philo_id = i + 1;
+		data->philo->left_fork = &data->forks[i];
+		data->philo->right_fork = &data->forks[(i + 1) % (data->nb_philos)];
+		if (pthread_create(&data->philo[i].tid, NULL, philo_routine, data))
+			return (1);
+		i++;
+	}
+	for (size_t i = 0; i < data->nb_philos; i++)
+	{
+		if (pthread_join(data->philo[i].tid, NULL))
+		{
+			destory_mutex(data, data->nb_philos);
+			free(data->forks);
+			free(data->philo);
+			return (1);
+		}
+	}
+	return (0);
+}
+
+
+int	pthread_init(t_data *data)
+{
+	if (fork_mutex_init(data))
+		return (1);
+	if (philo_create(data))
+		return (1);
+	return (0);
 }
 
 int	main(int ac, char **av)
@@ -263,7 +272,8 @@ int	main(int ac, char **av)
 	}
 	if (data_init(&data, av, ac))
 	{
-		printf("program start");
+		if (pthread_init(&data))
+			return (data.exit_status);
 	}
 
 	return (data.exit_status);
