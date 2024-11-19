@@ -63,6 +63,10 @@ Parameters:
 - `start_routine`: Pointer to thread function
 - `arg`: Arguments for thread function
 
+### Attributes
+- `attribute` define the state of the new thread.
+- system scope, joinable, stack size, inheritance , NULL -> deffault behavior
+
 ### Thread Termination
 Threads can terminate in three ways:
 1. Using pthread_exit()

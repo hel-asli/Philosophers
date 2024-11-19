@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/18 21:15:56 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/19 21:28:15 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,21 @@ Usage: ./philosophers number_of_philosophers\
 # include <pthread.h>
 # include <stdbool.h>
 # include <string.h>
+# include <sys/time.h>
 
 # define FAILURE 1
 # define SUCESS 0
+
+typedef struct s_data t_data;
 
 typedef struct s_philo
 {
 	pthread_t tid;
 	int		philo_id;
+	int		death;
 	pthread_mutex_t *left_fork;
 	pthread_mutex_t *right_fork;
+	t_data 	*data;
 } t_philo;
 
 typedef struct s_data
@@ -47,6 +52,7 @@ typedef struct s_data
 	int		exit_status;
 	t_philo *philo;
 	pthread_mutex_t *forks;
+	pthread_mutex_t *msg_lock;
 } t_data;
 
 bool	is_space(char c);
@@ -55,5 +61,6 @@ int		check_str(char *str);
 int		check_digits(char *str);
 int		check_args(char **av);
 size_t	ft_atoi(char *str);
+size_t	get_current_time(void);
 
 #endif

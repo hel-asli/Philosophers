@@ -6,18 +6,57 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/18 23:28:26 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/19 21:32:54 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+
+void eat(t_philo *philo)
+{
+	pthread_mutex_lock(philo->left_fork);
+	printf("%zu ms %d has taken a fork\n", get_current_time(), philo->philo_id);
+	pthread_mutex_lock(philo->right_fork);
+	printf("%zu ms %d has taken a fork\n", get_current_time(), philo->philo_id);
+
+	pthread_mutex_lock(philo->data->msg_lock);
+	printf("%zu ms %d is eating \n", get_current_time(), philo->philo_id);
+	usleep(philo->data->time_eat);
+	pthread_mutex_unlock(philo->data->msg_lock);
+
+	pthread_mutex_lock(philo->left_fork);
+	pthread_mutex_lock(philo->right_fork);
+}
+
+
+void sleepp(t_philo *philo)
+{
+	pthread_mutex_lock(philo->data->msg_lock);
+	printf("%zu ms %d is sleeping \n", get_current_time(), philo->philo_id);
+	usleep(philo->data->time_sleep);
+	pthread_mutex_unlock(philo->data->msg_lock);
+}
+
+void think(t_philo *philo)
+{
+	pthread_mutex_lock(philo->data->msg_lock);
+	printf("%zu ms %d is think \n", get_current_time(), philo->philo_id);
+	usleep(300);
+	pthread_mutex_unlock(philo->data->msg_lock);
+}
+
 void *philo_routine(void *arg)
 {
-	t_data *data;
+	t_philo *philo;
 
-	data = (t_data *)arg;
-	printf("hello from philo number :%d\n", data->philo->philo_id);
+	philo = arg;
+	while (!philo->death)
+	{
+		eat(philo);
+		sleepp(philo);
+		think(philo);
+	}
 	return (arg);
 }
 
@@ -99,12 +138,22 @@ int philo_create(t_data *data)
 		free(data->forks);
 		return (1);
 	}
+	data->msg_lock = malloc(sizeof(pthread_mutex_t));
+	if (!data->msg_lock)
+	{
+		destory_mutex(data, data->nb_philos);
+		free(data->forks);
+		free(data->philo);
+		return (1);
+	}
+	pthread_mutex_init(data->msg_lock, NULL);
 	while (i < data->nb_philos)
 	{
-		data->philo->philo_id = i + 1;
-		data->philo->left_fork = &data->forks[i];
-		data->philo->right_fork = &data->forks[(i + 1) % (data->nb_philos)];
-		if (pthread_create(&data->philo[i].tid, NULL, philo_routine, data))
+		data->philo[i].data = data;
+		data->philo[i].philo_id = i + 1;
+		data->philo[i].left_fork = &data->forks[i];
+		data->philo[i].right_fork = &data->forks[(i + 1) % (data->nb_philos)];
+		if (pthread_create(&data->philo[i].tid, NULL, philo_routine, data->philo))
 			return (1);
 		i++;
 	}
@@ -131,6 +180,15 @@ int	pthread_init(t_data *data)
 	return (0);
 }
 
+size_t get_current_time(void)
+{
+	struct timeval timestamp;
+
+	gettimeofday(&timestamp, NULL);
+
+	return ((timestamp.tv_sec * 1000) + (timestamp.tv_usec / 1000));
+}
+
 int	main(int ac, char **av)
 {
 	t_data data;
@@ -148,7 +206,7 @@ int	main(int ac, char **av)
 	if (data_init(&data, av, ac))
 	{
 		if (pthread_init(&data))
-			return (data.exit_status);
+			return (1);
 	}
 
 	return (data.exit_status);

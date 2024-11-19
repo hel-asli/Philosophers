@@ -1,8 +1,8 @@
-#include "philo.h"
+#include "Philo/philo.h"
 #include <string.h>
 #include <sys/errno.h>
 #include <sys/time.h>
-# define NUMS 1
+# define STACK_SIZE 1000000
 #include <stdatomic.h>
 
 
@@ -12,61 +12,28 @@
 
 // context switching of threads is faster than ps context switching
 
-// __thread 
+// __thread  (LTS)
 
-
-pthread_mutex_t lock; 
-pthread_mutex_t water_lock; 
-
-int coffe = 1;
-int water = 2;
-
-#define YELLOW "\e[1;33m"
-#define WHITE "\e[1;37m"
-
-void *routine(void *arg)
+void *rt(void *arg)
 {
-	printf("thread - %d\n", coffe);
-	pthread_mutex_lock(&lock);
-	coffe++;
-	pthread_mutex_unlock(&lock);
-	printf("thread - %d\n", coffe);
-	return (NULL);
-}
-
-size_t get_current_time(void)
-{
-	struct timeval ctime; 
-
-
-	if (gettimeofday(&ctime, NULL)) // why we pass NULL ? 
-		return (0);
-	
-	return ((ctime.tv_sec * 1000) +  (ctime.tv_usec / 1000));
-	
+	printf("hello world");
+	return (arg);
 }
 
 
 
 
-int main(int ac, char *av[])
+int main(void)
 {
-	pthread_t t[NUMS];
-	pthread_mutex_init(&lock, NULL);
-	pthread_mutex_init(&water_lock, NULL);
+	pthread_t t;
+	pthread_attr_t attr; // pthread_attr_t is a struct witch is opaque . 
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	if (pthread_create(&t, &attr, rt, NULL)) // fork point .
+		return (1);
 
-
-	for (int i = 0; i < NUMS; i++)
-	{
-		pthread_create(&t[i], NULL, routine, NULL);
-	}
-
-	for (int i = 0; i < NUMS; i++)
-	{
-		pthread_join(t[i], NULL);
-	}
-	printf("number of coffer %d\n", coffe);
-	pthread_mutex_destroy(&lock);
-	pthread_mutex_destroy(&water_lock);
+	pthread_exit(NULL);
+	// waits for thread to complete execution and take there exit status .
+	// and then the kernel can clean the resource allocated for that thread . 
 	return (0);
 }
