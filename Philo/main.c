@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/19 21:32:54 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/19 21:41:14 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void eat(t_philo *philo)
 	usleep(philo->data->time_eat);
 	pthread_mutex_unlock(philo->data->msg_lock);
 
-	pthread_mutex_lock(philo->left_fork);
-	pthread_mutex_lock(philo->right_fork);
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
 }
 
 
@@ -157,6 +157,8 @@ int philo_create(t_data *data)
 			return (1);
 		i++;
 	}
+	printf("%zu\n", i);
+	pause();
 	for (size_t i = 0; i < data->nb_philos; i++)
 	{
 		if (pthread_join(data->philo[i].tid, NULL))
