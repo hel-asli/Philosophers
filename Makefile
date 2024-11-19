@@ -2,29 +2,23 @@ NAME = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -fsanitize=thread -lpthread
-MFOLDER = Mandatory
-USER = $(shell uname)
+MFOLDER = Philo
 RM = rm -f
-MSRCS = $(MFOLDER)/main.c 
+MSRCS = $(MFOLDER)/main.c  $(MFOLDER)/parsing_utils.c $(MFOLDER)/utils.c
 MOBJS = ${MSRCS:.c=.o}
 
 all : $(MFOLDER)/$(NAME)
 
-
-$(MFOLDER)/%.o : $(MFOLDER)/%.c philo.h
+$(MFOLDER)/%.o : $(MFOLDER)/%.c $(MFOLDER)/philo.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(MFOLDER)/$(NAME) : $(MOBJS) 
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
-	$(RM) $(NAME)
-	@ln -s $@ $(NAME)
-
-clean :
-	@echo $(LDFLAGS)
-	$(RM) $(MOBJS)
 
 fclean : clean
-	$(RM) $(NAME) $(MFOLDER)/$(NAME)
+	$(RM) $(MFOLDER)/$(NAME)
+clean :
+	$(RM) $(MOBJS)
 
 re : fclean all
 
