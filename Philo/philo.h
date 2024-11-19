@@ -24,6 +24,7 @@ Usage: ./philosophers number_of_philosophers\
 # include <unistd.h>
 # include <pthread.h>
 # include <stdbool.h>
+# include <string.h>
 
 # define FAILURE 1
 # define SUCESS 0
@@ -47,5 +48,12 @@ typedef struct s_data
 	t_philo *philo;
 	pthread_mutex_t *forks;
 } t_data;
+
+bool	is_space(char c);
+int		count_words(char *str);
+int		check_str(char *str);
+int		check_digits(char *str);
+int		check_args(char **av);
+size_t	ft_atoi(char *str);
 
 #endif
