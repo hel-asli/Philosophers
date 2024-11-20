@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/20 16:34:13 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/20 22:19:59 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,22 @@ Usage: ./philosophers number_of_philosophers\
 # define FAILURE 1
 # define SUCESS 0
 
+# define FORK_MSG "has taken a fork"
+# define EAT_MSG "is eating"
+# define SLEEP_MSG "is sleeping"
+# define THINK_MSG "is thinking"
+# define DIED_MSG "is died"
+
 typedef struct s_data t_data;
+
+
+typedef enum e_msg
+{
+	FORK,
+	EATING,
+	SLEPING,
+	THINKING,
+} t_msg;
 
 typedef struct s_philo
 {
@@ -38,10 +53,7 @@ typedef struct s_philo
 	int				philo_id;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	size_t			nb_meals;
-	pthread_mutex_t	nb_meals_lock;
 	size_t			last_meal_time;
-	pthread_mutex_t last_meal_lock;
 	t_data			*data;
 } t_philo;
 
@@ -53,8 +65,11 @@ typedef struct s_data
 	size_t			time_die;
 	size_t			time_eat;
 	size_t			time_sleep;
+	size_t			nb_meals;
+	pthread_mutex_t nb_meals_lock;
 	size_t			nb_must_eat;
 	int				exit_status;
+	pthread_mutex_t last_meal_lock;
 	size_t			start_time;
 	int				end;
 	pthread_mutex_t	end_lock;
