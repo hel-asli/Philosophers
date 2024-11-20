@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/19 21:28:15 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/20 16:34:13 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,25 +34,32 @@ typedef struct s_data t_data;
 
 typedef struct s_philo
 {
-	pthread_t tid;
-	int		philo_id;
-	int		death;
-	pthread_mutex_t *left_fork;
-	pthread_mutex_t *right_fork;
-	t_data 	*data;
+	pthread_t		tid;
+	int				philo_id;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	size_t			nb_meals;
+	pthread_mutex_t	nb_meals_lock;
+	size_t			last_meal_time;
+	pthread_mutex_t last_meal_lock;
+	t_data			*data;
 } t_philo;
 
 typedef struct s_data
 {
-	size_t	nb_philos;
-	size_t	time_die;
-	size_t	time_eat;
-	size_t	time_sleep;
-	size_t	nb_must_eat;
-	int		exit_status;
-	t_philo *philo;
-	pthread_mutex_t *forks;
-	pthread_mutex_t *msg_lock;
+	t_philo			*philo;
+	pthread_t		monitor;
+	size_t			nb_philos;
+	size_t			time_die;
+	size_t			time_eat;
+	size_t			time_sleep;
+	size_t			nb_must_eat;
+	int				exit_status;
+	size_t			start_time;
+	int				end;
+	pthread_mutex_t	end_lock;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	msg_lock;
 } t_data;
 
 bool	is_space(char c);
