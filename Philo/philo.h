@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/21 01:37:25 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/21 18:53:54 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	t_philo			*philo;
 	pthread_t		monitor;
 	size_t			nb_philos;
 	size_t			time_die;

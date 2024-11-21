@@ -19,8 +19,6 @@ void safe_print_msg(t_philo *philo, t_msg state)
             printf("%zu %d is sleeping\n", elapsed_time, philo->philo_id);
         else if (state == THINKING)
             printf("%zu %d is thinking\n", elapsed_time, philo->philo_id);
-        else if (state == DIED)
-            printf("%zu %d id diedn", elapsed_time, philo->philo_id);
     }
     pthread_mutex_unlock(&philo->data->msg_lock);
 }
