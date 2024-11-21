@@ -30,6 +30,9 @@ Usage: ./philosophers number_of_philosophers\
 # define FAILURE 1
 # define SUCESS 0
 
+# define MSECONDS 1
+# define USECONDS 2
+
 typedef struct s_data t_data;
 
 
@@ -53,6 +56,7 @@ typedef struct s_philo
 	size_t			nb_meals;
 	t_data			*data;
 } t_philo;
+
 
 typedef struct s_data
 {
@@ -80,7 +84,7 @@ int		check_str(char *str);
 int		check_digits(char *str);
 int		check_args(char **av);
 size_t	ft_atoi(char *str);
-size_t	get_current_time(void);
+size_t	get_current_time(int flag);
 int		is_finish(t_data *data);
 void	safe_print_msg(t_philo *philo, t_msg state);
 int		data_init(t_data *data, char **av, int ac);

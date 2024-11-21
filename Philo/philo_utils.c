@@ -5,7 +5,7 @@ void safe_print_msg(t_philo *philo, t_msg state)
     size_t current_time;
     size_t elapsed_time;
 
-    current_time = get_current_time();
+    current_time = get_current_time(MSECONDS);
     elapsed_time = current_time - philo->data->start_time;
     pthread_mutex_lock(&philo->data->msg_lock);
     if (!is_finish(philo->data))

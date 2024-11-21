@@ -25,8 +25,8 @@ int	is_finish(t_data *data)
 
 void precise_usleep(size_t useconds)
 {
-    size_t start = get_current_time() * 1000;
-    while (((get_current_time() * 1000) - start) < useconds)
+    size_t start = get_current_time(USECONDS);
+    while ((get_current_time(USECONDS) - start) < useconds)
         usleep(500);
 }
 
@@ -35,15 +35,15 @@ void eat_phase(t_philo *philo)
     pthread_mutex_t *first_fork;
     pthread_mutex_t *second_fork;
 
-    if (philo->right_fork < philo->left_fork)
-    {
-        first_fork = philo->right_fork;
-        second_fork = philo->left_fork;
-    }
-    else
+    if (philo->philo_id % 2 == 0)
     {
         first_fork = philo->left_fork;
         second_fork = philo->right_fork;
+    }
+    else
+    {
+        first_fork = philo->right_fork;
+        second_fork = philo->left_fork;
     }
 
     pthread_mutex_lock(first_fork);
@@ -55,7 +55,7 @@ void eat_phase(t_philo *philo)
     safe_print_msg(philo, EATING);
 
     pthread_mutex_lock(&philo->data->last_meal_lock);
-    philo->last_meal_time = get_current_time();
+    philo->last_meal_time = get_current_time(MSECONDS);
     pthread_mutex_unlock(&philo->data->last_meal_lock);
 
     precise_usleep(philo->data->time_eat * 1000);
@@ -116,7 +116,7 @@ int data_init(t_data *data, char **av, int ac)
 	else
 		data->nb_must_eat = 0;
 	data->end = 0;	
-	data->start_time = get_current_time();
+	data->start_time = get_current_time(MSECONDS);
 	pthread_mutex_init(&data->msg_lock, NULL);
 	pthread_mutex_init(&data->end_lock, NULL);
 	pthread_mutex_init(&data->last_meal_lock, NULL);
@@ -172,7 +172,7 @@ void *monitor_job(void *arg)
 		i = 0;
 		while (i < data->nb_philos)
 		{
-			timestamp = get_current_time();
+			timestamp = get_current_time(MSECONDS);
 			pthread_mutex_lock(&data->last_meal_lock);
 			delay = timestamp - data->philo[i].last_meal_time;
 			pthread_mutex_unlock(&data->last_meal_lock);
@@ -242,16 +242,26 @@ int	pthread_init(t_data *data)
 		return (1);
 	if (philo_create(data))
 		return (1);
+    
+    destory_mutex(data, data->nb_philos);
+    free(data->forks);
+    free(data->philo);
 	return (0);
 }
 
-size_t get_current_time(void)
+size_t get_current_time(int flag)
 {
 	struct timeval timestamp;
+	size_t ret;
 
 	gettimeofday(&timestamp, NULL);
 
-	return ((timestamp.tv_sec * 1000) + (timestamp.tv_usec / 1000));
+	if (flag == MSECONDS)
+		ret = (timestamp.tv_sec * (size_t)1000) + (timestamp.tv_usec / 1000);
+	else if (flag == USECONDS)
+		ret = (timestamp.tv_sec * (size_t)1e6) + (timestamp.tv_usec);
+
+	return (ret);
 }
 
 int	main(int ac, char **av)
