@@ -30,12 +30,6 @@ Usage: ./philosophers number_of_philosophers\
 # define FAILURE 1
 # define SUCESS 0
 
-# define FORK_MSG "has taken a fork"
-# define EAT_MSG "is eating"
-# define SLEEP_MSG "is sleeping"
-# define THINK_MSG "is thinking"
-# define DIED_MSG "is died"
-
 typedef struct s_data t_data;
 
 
@@ -48,12 +42,6 @@ typedef enum e_msg
 	DIED,
 } t_msg;
 
-typedef enum e_state
-{
-	EAT,
-	THINK,
-	STATE, 
-} t_state;
 
 typedef struct s_philo
 {
@@ -80,6 +68,7 @@ typedef struct s_data
 	pthread_mutex_t nb_meals_lock;
 	size_t			start_time;
 	int				end;
+	pthread_mutex_t arbit;
 	pthread_mutex_t	end_lock;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	msg_lock;
@@ -92,7 +81,11 @@ int		check_digits(char *str);
 int		check_args(char **av);
 size_t	ft_atoi(char *str);
 size_t	get_current_time(void);
-int	is_finish(t_data *data);
+int		is_finish(t_data *data);
 void	safe_print_msg(t_philo *philo, t_msg state);
+int		data_init(t_data *data, char **av, int ac);
+int	pthread_init(t_data *data);
+int fork_mutex_init(t_data *data);
+void destory_mutex(t_data *data, size_t i);
 
 #endif

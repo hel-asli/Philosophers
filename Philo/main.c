@@ -25,17 +25,17 @@ int	is_finish(t_data *data)
 
 void precise_usleep(size_t useconds)
 {
-	size_t start = get_current_time() * 1000;
-	while (((get_current_time() * 1000) - start) < useconds)
-		usleep(500);
+    size_t start = get_current_time() * 1000;
+    while (((get_current_time() * 1000) - start) < useconds)
+        usleep(500);
 }
-
 
 void eat_phase(t_philo *philo)
 {
     pthread_mutex_t *first_fork;
     pthread_mutex_t *second_fork;
-    if (philo->philo_id % 2)
+
+    if (philo->right_fork < philo->left_fork)
     {
         first_fork = philo->right_fork;
         second_fork = philo->left_fork;
@@ -45,46 +45,44 @@ void eat_phase(t_philo *philo)
         first_fork = philo->left_fork;
         second_fork = philo->right_fork;
     }
+
     pthread_mutex_lock(first_fork);
     safe_print_msg(philo, FORK);
     pthread_mutex_lock(second_fork);
     safe_print_msg(philo, FORK);
 
+
+    safe_print_msg(philo, EATING);
+
     pthread_mutex_lock(&philo->data->last_meal_lock);
-	philo->last_meal_time = get_current_time();
+    philo->last_meal_time = get_current_time();
     pthread_mutex_unlock(&philo->data->last_meal_lock);
 
-    pthread_mutex_lock(&philo->data->nb_meals_lock);
-	philo->nb_meals += 1;
-    pthread_mutex_unlock(&philo->data->nb_meals_lock);
-
-	safe_print_msg(philo, EATING);
-	precise_usleep(philo->data->time_eat);
+    precise_usleep(philo->data->time_eat * 1000);
 
 
-	pthread_mutex_unlock(first_fork);
-	pthread_mutex_unlock(second_fork);
+    pthread_mutex_unlock(first_fork);
+    pthread_mutex_unlock(second_fork);
 }
-
 
 void sleep_phase(t_philo *philo)
 {
-	safe_print_msg(philo, SLEPING);
-	precise_usleep(philo->data->time_sleep);
+    safe_print_msg(philo, SLEPING);
+    precise_usleep(philo->data->time_sleep * 1000);
 }
 
 void *philo_routine(void *arg)
 {
-	t_philo *philo;
+    t_philo *philo = (t_philo *)arg;
 
-	philo = arg;
-	while (!is_finish(philo->data))
-	{
-		eat_phase(philo);
-		sleep_phase(philo);
+    while (!is_finish(philo->data))
+    {
+        eat_phase(philo);
+        sleep_phase(philo);
         safe_print_msg(philo, THINKING);
-	}
-	return (arg);
+    }
+
+    return (NULL);
 }
 
 int data_init(t_data *data, char **av, int ac)
@@ -123,6 +121,7 @@ int data_init(t_data *data, char **av, int ac)
 	pthread_mutex_init(&data->end_lock, NULL);
 	pthread_mutex_init(&data->last_meal_lock, NULL);
     pthread_mutex_init(&data->nb_meals_lock, NULL);
+    pthread_mutex_init(&data->arbit, NULL);
 	return (1);
 }
 
@@ -167,6 +166,7 @@ void *monitor_job(void *arg)
 	size_t i;
 
 	data = arg;
+    precise_usleep(1000);
 	while (!is_finish(data))
 	{
 		i = 0;
@@ -186,7 +186,7 @@ void *monitor_job(void *arg)
 			}
 			i++;
 		}
-		usleep(300);
+		precise_usleep(300);
 	}
 	return (NULL);
 }
