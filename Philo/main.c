@@ -23,6 +23,13 @@ int	is_finish(t_data *data)
 	return (n);
 }
 
+void precise_usleep(size_t milliseconds)
+{
+	size_t start = get_current_time();
+	while ((get_current_time() - start) < milliseconds)
+		usleep(100);  // Sleep in small intervals for better precision
+}
+
 void print_msg(t_philo *philo, const char *str)
 {
 	pthread_mutex_lock(&philo->data->msg_lock);
@@ -34,7 +41,7 @@ void print_msg(t_philo *philo, const char *str)
 
 void eat_phase(t_philo *philo)
 {
-	if (philo->left_fork < philo->right_fork)
+	if (philo->philo_id % 2 == 0)
 	{
 		pthread_mutex_lock(philo->left_fork);
 		print_msg(philo, FORK_MSG);
@@ -53,7 +60,7 @@ void eat_phase(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->last_meal_lock);
 
 	print_msg(philo, EAT_MSG);
-	usleep(philo->data->time_eat * 1000);
+	precise_usleep(philo->data->time_eat);
 
 	pthread_mutex_lock(&philo->nb_meals_lock);
 	philo->nb_meals += 1;
@@ -67,7 +74,7 @@ void eat_phase(t_philo *philo)
 void sleep_phase(t_philo *philo)
 {
 	print_msg(philo, SLEEP_MSG);
-	usleep(philo->data->time_sleep * 1000);
+	precise_usleep(philo->data->time_sleep);
 }
 
 
