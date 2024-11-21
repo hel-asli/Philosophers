@@ -45,6 +45,7 @@ typedef enum e_msg
 	EATING,
 	SLEPING,
 	THINKING,
+	DIED,
 } t_msg;
 
 typedef enum e_state
@@ -62,7 +63,6 @@ typedef struct s_philo
 	pthread_mutex_t	*right_fork;
 	size_t			last_meal_time;
 	size_t			nb_meals;
-	pthread_mutex_t nb_meals_lock;
 	t_data			*data;
 } t_philo;
 
@@ -77,6 +77,7 @@ typedef struct s_data
 	size_t			nb_must_eat;
 	int				exit_status;
 	pthread_mutex_t last_meal_lock;
+	pthread_mutex_t nb_meals_lock;
 	size_t			start_time;
 	int				end;
 	pthread_mutex_t	end_lock;
@@ -91,5 +92,7 @@ int		check_digits(char *str);
 int		check_args(char **av);
 size_t	ft_atoi(char *str);
 size_t	get_current_time(void);
+int	is_finish(t_data *data);
+void	safe_print_msg(t_philo *philo, t_msg state);
 
 #endif

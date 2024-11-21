@@ -23,60 +23,55 @@ int	is_finish(t_data *data)
 	return (n);
 }
 
-void precise_usleep(size_t milliseconds)
+void precise_usleep(size_t useconds)
 {
-	size_t start = get_current_time();
-	while ((get_current_time() - start) < milliseconds)
-		usleep(100);  // Sleep in small intervals for better precision
-}
-
-void print_msg(t_philo *philo, const char *str)
-{
-	pthread_mutex_lock(&philo->data->msg_lock);
-	if (!is_finish(philo->data))
-		printf("%zu ms %d %s\n", get_current_time() - philo->data->start_time, philo->philo_id, str);
-	pthread_mutex_unlock(&philo->data->msg_lock);
+	size_t start = get_current_time() * 1000;
+	while (((get_current_time() * 1000) - start) < useconds)
+		usleep(500);
 }
 
 
 void eat_phase(t_philo *philo)
 {
-	if (philo->philo_id % 2 == 0)
-	{
-		pthread_mutex_lock(philo->left_fork);
-		print_msg(philo, FORK_MSG);
-		pthread_mutex_lock(philo->right_fork);
-		print_msg(philo, FORK_MSG);
-	}
-	else
-	{
-		pthread_mutex_lock(philo->right_fork);
-		print_msg(philo, FORK_MSG);
-		pthread_mutex_lock(philo->left_fork);
-		print_msg(philo, FORK_MSG);
-	}
-	pthread_mutex_lock(&philo->data->last_meal_lock);
-	philo->last_meal_time = get_current_time();
-	pthread_mutex_unlock(&philo->data->last_meal_lock);
+    pthread_mutex_t *first_fork;
+    pthread_mutex_t *second_fork;
+    if (philo->philo_id % 2)
+    {
+        first_fork = philo->right_fork;
+        second_fork = philo->left_fork;
+    }
+    else
+    {
+        first_fork = philo->left_fork;
+        second_fork = philo->right_fork;
+    }
+    pthread_mutex_lock(first_fork);
+    safe_print_msg(philo, FORK);
+    pthread_mutex_lock(second_fork);
+    safe_print_msg(philo, FORK);
 
-	print_msg(philo, EAT_MSG);
+    pthread_mutex_lock(&philo->data->last_meal_lock);
+	philo->last_meal_time = get_current_time();
+    pthread_mutex_unlock(&philo->data->last_meal_lock);
+
+    pthread_mutex_lock(&philo->data->nb_meals_lock);
+	philo->nb_meals += 1;
+    pthread_mutex_unlock(&philo->data->nb_meals_lock);
+
+	safe_print_msg(philo, EATING);
 	precise_usleep(philo->data->time_eat);
 
-	pthread_mutex_lock(&philo->nb_meals_lock);
-	philo->nb_meals += 1;
-	pthread_mutex_unlock(&philo->nb_meals_lock);
 
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
+	pthread_mutex_unlock(first_fork);
+	pthread_mutex_unlock(second_fork);
 }
 
 
 void sleep_phase(t_philo *philo)
 {
-	print_msg(philo, SLEEP_MSG);
+	safe_print_msg(philo, SLEPING);
 	precise_usleep(philo->data->time_sleep);
 }
-
 
 void *philo_routine(void *arg)
 {
@@ -87,7 +82,7 @@ void *philo_routine(void *arg)
 	{
 		eat_phase(philo);
 		sleep_phase(philo);
-		print_msg(philo, THINK_MSG);
+        safe_print_msg(philo, THINKING);
 	}
 	return (arg);
 }
@@ -127,6 +122,7 @@ int data_init(t_data *data, char **av, int ac)
 	pthread_mutex_init(&data->msg_lock, NULL);
 	pthread_mutex_init(&data->end_lock, NULL);
 	pthread_mutex_init(&data->last_meal_lock, NULL);
+    pthread_mutex_init(&data->nb_meals_lock, NULL);
 	return (1);
 }
 
@@ -184,9 +180,7 @@ void *monitor_job(void *arg)
 			{
 				pthread_mutex_lock(&data->end_lock);
 				data->end = 1;
-				pthread_mutex_lock(&data->msg_lock);
-				printf("%zu ms %d is died\n", get_current_time() - data->start_time, data->philo[i].philo_id);
-				pthread_mutex_unlock(&data->msg_lock);
+                safe_print_msg(&data->philo[i], DIED);
 				pthread_mutex_unlock(&data->end_lock);
 				return (NULL);
 			}
@@ -209,21 +203,24 @@ int philo_create(t_data *data)
 		free(data->forks);
 		return (1);
 	}
-	while (i < data->nb_philos)
-	{
-		pthread_mutex_init(&data->philo[i].nb_meals_lock, NULL);
+    while (i < data->nb_philos)
+    {
 		data->philo[i].data = data;
 		data->philo[i].nb_meals = 0;
 		data->philo[i].philo_id = i + 1;
 		data->philo[i].left_fork = &data->forks[i];
 		data->philo[i].right_fork = &data->forks[(i + 1) % (data->nb_philos)];
 		data->philo[i].last_meal_time = data->start_time;
+        i++;
+    }
+    i = 0;
+	while (i < data->nb_philos)
+	{
 		if (pthread_create(&data->philo[i].tid, NULL, philo_routine, &data->philo[i]))
 			return (1);
 		i++;
 	}
 	pthread_create(&data->monitor, NULL, monitor_job, data);
-	pthread_detach(data->monitor);
 	for (size_t i = 0; i < data->nb_philos; i++)
 	{
 		if (pthread_join(data->philo[i].tid, NULL))
@@ -234,6 +231,7 @@ int philo_create(t_data *data)
 			return (1);
 		}
 	}
+    pthread_join(data->monitor, NULL);
 	return (0);
 }
 
