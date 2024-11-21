@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/20 22:19:59 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/21 01:37:25 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,13 @@ typedef enum e_msg
 	THINKING,
 } t_msg;
 
+typedef enum e_state
+{
+	EAT,
+	THINK,
+	STATE, 
+} t_state;
+
 typedef struct s_philo
 {
 	pthread_t		tid;
@@ -54,6 +61,8 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	size_t			last_meal_time;
+	size_t			nb_meals;
+	pthread_mutex_t nb_meals_lock;
 	t_data			*data;
 } t_philo;
 
@@ -65,8 +74,6 @@ typedef struct s_data
 	size_t			time_die;
 	size_t			time_eat;
 	size_t			time_sleep;
-	size_t			nb_meals;
-	pthread_mutex_t nb_meals_lock;
 	size_t			nb_must_eat;
 	int				exit_status;
 	pthread_mutex_t last_meal_lock;
