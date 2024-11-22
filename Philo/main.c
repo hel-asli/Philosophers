@@ -183,7 +183,7 @@ void *monitor_job(void *arg)
 	size_t i;
 
 	philo = arg;
-	while (!is_finish(philo->data))
+	while (true)
 	{
 		i = 0;
 		while (i < philo->data->nb_philos)
@@ -195,10 +195,13 @@ void *monitor_job(void *arg)
 			if (c - last_meal > philo->data->time_die)
 			{
 				pthread_mutex_lock(&philo->data->end_lock);
-				philo->data->end = 1;
-				pthread_mutex_lock(&philo->data->msg_lock);
-            	printf("%zu %d is died", c - philo->data->start_time, philo->philo_id);
-				pthread_mutex_unlock(&philo->data->msg_lock);
+				if (!philo->data->end)
+				{
+					philo->data->end = 1;
+					pthread_mutex_lock(&philo->data->msg_lock);
+            		printf("%zu %d is died", c - philo->data->start_time, philo->philo_id);
+					pthread_mutex_unlock(&philo->data->msg_lock);
+				}
 				pthread_mutex_unlock(&philo->data->end_lock);
 				return (NULL);
 			}
