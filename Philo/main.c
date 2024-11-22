@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/21 20:56:59 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/22 21:29:16 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,41 +220,40 @@ void *monitor_job(void *arg)
 		while (i < philo->data->nb_philos)
 		{
 			c = get_current_time(MSECONDS);
-			// if (philo->data->end)
-			// {
-			// 	pthread_mutex_unlock(&philo->data->end_lock);
-			// 	return (NULL);
-			// }
+
 			pthread_mutex_lock(&philo->data->last_meal_lock);
-			last_meal = philo[i].last_meal_time;
-			if (c - last_meal > philo->data->time_die)
+			last_meal = c - philo[i].last_meal_time;
+			pthread_mutex_unlock(&philo->data->last_meal_lock);
+
+			if (last_meal >= philo->data->time_die)
 			{
 				pthread_mutex_lock(&philo->data->end_lock);
 				if (!philo->data->end)
 				{
 					philo->data->end = 1;
 					pthread_mutex_lock(&philo->data->msg_lock);
-            		printf("%zu %d is died", c - philo->data->start_time, philo->philo_id);
+            		printf("%zu %d is died\n", c - philo->data->start_time, philo->philo_id);
 					pthread_mutex_unlock(&philo->data->msg_lock);
 				}
 				pthread_mutex_unlock(&philo->data->end_lock);
 				return (NULL);
 			}
-			pthread_mutex_unlock(&philo->data->last_meal_lock);
 
+
+			// nb meals check .
 			if (philo->data->nb_must_eat > 0)
 			{
-			pthread_mutex_lock(&philo->data->is_full_lock);
-			if (!philo[i].is_full)
-			{
-				pthread_mutex_lock(&philo->data->nb_meals_lock);
-				if (philo[i].nb_meals >= philo->data->nb_must_eat)
+				pthread_mutex_lock(&philo->data->is_full_lock);
+				if (!philo[i].is_full)
 				{
-					philo[i].is_full = 1;
+					pthread_mutex_lock(&philo->data->nb_meals_lock);
+					if (philo[i].nb_meals >= philo->data->nb_must_eat)
+					{
+						philo[i].is_full = 1;
+					}
+					pthread_mutex_unlock(&philo->data->nb_meals_lock);
 				}
-				pthread_mutex_unlock(&philo->data->nb_meals_lock);
-			}
-			pthread_mutex_unlock(&philo->data->is_full_lock);
+				pthread_mutex_unlock(&philo->data->is_full_lock);
 			}
 			i++;
 		}
