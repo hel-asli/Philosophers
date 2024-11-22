@@ -71,11 +71,9 @@ void sleep_phase(t_philo *philo)
 void edge_case(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
-    safe_print_msg(philo, FORK);
 
-	pthread_mutex_lock(&philo->data->end_lock);	
-	philo->data->end = 1;
-	pthread_mutex_unlock(&philo->data->end_lock);	
+    safe_print_msg(philo, FORK);
+	precise_usleep(philo->data->time_die);
 
 	pthread_mutex_unlock(philo->left_fork);
 }
@@ -114,8 +112,6 @@ void *philo_routine(void *arg)
 			break ;
         safe_print_msg(philo, THINKING);
     }
-	if (philo->data->nb_philos == 1 && is_finish(philo->data))
-		printf("%zu %d is died\n", get_current_time(MSECONDS) - philo->last_meal_time, philo->philo_id);
     return (NULL);
 }
 
@@ -213,7 +209,7 @@ void *monitor_job(void *arg)
 	size_t i;
 
 	philo = arg;
-	while (philo->data->nb_philos > 1)
+	while (true)
 	{
 		i = 0;
 
