@@ -1,7 +1,7 @@
 NAME = philo
-CC = cc
+CC = clang
 CFLAGS = -Wall -Wextra -Werror
-LDFLAGS = #-fsanitize=thread -lpthread
+LDFLAGS = -fsanitize=thread -lpthread
 RM = rm -f
 MSRCS = main.c parsing_utils.c utils.c philo_utils.c
 MOBJS = ${MSRCS:.c=.o}
