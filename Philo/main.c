@@ -28,7 +28,7 @@ void precise_usleep(size_t useconds)
     size_t start = get_current_time(MSECONDS);
     while ((get_current_time(MSECONDS) - start) < useconds)
 	{
-        usleep(1000);
+        usleep(500);
 	}
 }
 
@@ -213,7 +213,7 @@ void *monitor_job(void *arg)
 	size_t i;
 
 	philo = arg;
-	while (true)
+	while (philo->data->nb_philos > 1)
 	{
 		i = 0;
 
@@ -224,7 +224,6 @@ void *monitor_job(void *arg)
 		while (i < philo->data->nb_philos)
 		{
 			c = get_current_time(MSECONDS);
-			pthread_mutex_lock(&philo->data->end_lock);
 			// if (philo->data->end)
 			// {
 			// 	pthread_mutex_unlock(&philo->data->end_lock);
@@ -232,9 +231,9 @@ void *monitor_job(void *arg)
 			// }
 			pthread_mutex_lock(&philo->data->last_meal_lock);
 			last_meal = philo[i].last_meal_time;
-			pthread_mutex_unlock(&philo->data->last_meal_lock);
 			if (c - last_meal > philo->data->time_die)
 			{
+				pthread_mutex_lock(&philo->data->end_lock);
 				if (!philo->data->end)
 				{
 					philo->data->end = 1;
@@ -245,7 +244,7 @@ void *monitor_job(void *arg)
 				pthread_mutex_unlock(&philo->data->end_lock);
 				return (NULL);
 			}
-			pthread_mutex_unlock(&philo->data->end_lock);
+			pthread_mutex_unlock(&philo->data->last_meal_lock);
 
 			if (philo->data->nb_must_eat > 0)
 			{
@@ -263,7 +262,7 @@ void *monitor_job(void *arg)
 			}
 			i++;
 		}
-		usleep(100);
+		usleep(300);
 	}
 	return (NULL);
 }
