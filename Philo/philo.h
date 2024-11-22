@@ -54,6 +54,7 @@ typedef struct s_philo
 	pthread_mutex_t	*right_fork;
 	size_t			last_meal_time;
 	size_t			nb_meals;
+	int				is_full;
 	t_data			*data;
 } t_philo;
 
@@ -71,7 +72,7 @@ typedef struct s_data
 	pthread_mutex_t nb_meals_lock;
 	size_t			start_time;
 	int				end;
-	pthread_mutex_t arbit;
+	pthread_mutex_t is_full_lock;
 	pthread_mutex_t	end_lock;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	msg_lock;

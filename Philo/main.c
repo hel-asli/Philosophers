@@ -80,11 +80,23 @@ void edge_case(t_philo *philo)
 	pthread_mutex_unlock(philo->left_fork);
 }
 
+int is_full(t_philo *philo)
+{
+	int n;
+
+	pthread_mutex_lock(&philo->data->is_full_lock);
+	n = philo->is_full;
+	pthread_mutex_unlock(&philo->data->is_full_lock);
+
+
+	return (n);
+}
+
 void *philo_routine(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
 
-    while (!is_finish(philo->data))
+    while (!is_finish(philo->data) && !is_full(philo))
     {
 		if (philo->data->nb_philos == 1)
 			edge_case(philo);
@@ -92,6 +104,11 @@ void *philo_routine(void *arg)
         	eat_phase(philo);
 		if (is_finish(philo->data))
 			break ;
+
+		pthread_mutex_lock(&philo->data->nb_meals_lock);
+		philo->nb_meals++;
+		pthread_mutex_unlock(&philo->data->nb_meals_lock);
+
         sleep_phase(philo);
 		if (is_finish(philo->data))
 			break ;
@@ -138,7 +155,7 @@ int data_init(t_data *data, char **av, int ac)
 	pthread_mutex_init(&data->end_lock, NULL);
 	pthread_mutex_init(&data->last_meal_lock, NULL);
     pthread_mutex_init(&data->nb_meals_lock, NULL);
-    pthread_mutex_init(&data->arbit, NULL);
+	pthread_mutex_init(&data->is_full_lock, NULL);
 	return (1);
 }
 
@@ -175,6 +192,19 @@ int fork_mutex_init(t_data *data)
 	return (0);
 }
 
+int all_full(t_philo *philo)
+{
+	size_t i = 0;
+
+	while (i < philo->data->nb_philos)
+	{
+		if (!philo[i].is_full)
+			return (0);
+		i++;
+	}
+	return (1);	
+}
+
 void *monitor_job(void *arg)
 {
 	size_t last_meal;
@@ -186,6 +216,11 @@ void *monitor_job(void *arg)
 	while (true)
 	{
 		i = 0;
+
+		if (all_full(philo))
+		{
+			break;
+		}
 		while (i < philo->data->nb_philos)
 		{
 			c = get_current_time(MSECONDS);
@@ -211,6 +246,21 @@ void *monitor_job(void *arg)
 				return (NULL);
 			}
 			pthread_mutex_unlock(&philo->data->end_lock);
+
+			if (philo->data->nb_must_eat > 0)
+			{
+			pthread_mutex_lock(&philo->data->is_full_lock);
+			if (!philo[i].is_full)
+			{
+				pthread_mutex_lock(&philo->data->nb_meals_lock);
+				if (philo[i].nb_meals >= philo->data->nb_must_eat)
+				{
+					philo[i].is_full = 1;
+				}
+				pthread_mutex_unlock(&philo->data->nb_meals_lock);
+			}
+			pthread_mutex_unlock(&philo->data->is_full_lock);
+			}
 			i++;
 		}
 		usleep(100);
@@ -238,6 +288,7 @@ int philo_create(t_data *data)
     {
 		philo[i].data = data;
 		philo[i].nb_meals = 0;
+		philo[i].is_full = 0;
 		philo[i].left_fork = &data->forks[i];
 		philo[i].right_fork = &data->forks[(i + 1) % (data->nb_philos)];
 		philo[i].philo_id = i + 1;
