@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/23 01:48:29 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/24 00:21:41 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ typedef struct s_philo
 typedef struct s_data
 {
 	pthread_t		monitor;
-	pthread_attr_t monitor_attr;
 	size_t			nb_philos;
 	size_t			time_die;
 	size_t			time_eat;
@@ -89,12 +88,18 @@ int		check_digits(char *str);
 int		check_args(char **av);
 size_t	ft_atoi(char *str);
 size_t	get_current_time(int flag);
-int		is_finish(t_data *data);
 void	safe_print_msg(t_philo *philo, t_msg state);
 int		data_init(t_data *data, char **av, int ac);
-int	pthread_init(t_data *data);
-int fork_mutex_init(t_data *data);
-void destory_mutex(t_data *data, size_t i);
+int		pthread_init(t_data *data);
+void		fork_mutex_init(t_data *data);
+void	destory_mutex(t_data *data, size_t i);
 void	ft_putstr_fd(char *s, int fd);
+void 	ft_error(t_data *data, char *str);
+int		end_mutex_getter(t_data *data);
+void	end_mutex_setter(t_data *data, int value);
+int		full_mutex_getter(t_philo *philo);
+void	full_mutex_setter(t_philo *philo, int value);
+void	*monitor_job(void *arg);
+void	*philo_routine(void *arg);
 
 #endif
