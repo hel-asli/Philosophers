@@ -1,13 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/22 22:14:48 by hel-asli          #+#    #+#             */
+/*   Updated: 2024/11/22 22:54:10 by hel-asli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void safe_print_msg(t_philo *philo, t_msg state)
 {
     size_t current_time;
     size_t elapsed_time;
+	int		end;
 
     current_time = get_current_time(MSECONDS);
     elapsed_time = current_time - philo->data->start_time;
-    if (!is_finish(philo->data))
+	end = end_mutex_getter(philo->data);
+    if (!end)
     {
         pthread_mutex_lock(&philo->data->msg_lock);
         if (state == FORK)

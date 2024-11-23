@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_utils.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/23 00:24:17 by hel-asli          #+#    #+#             */
+/*   Updated: 2024/11/23 00:33:36 by hel-asli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 bool is_space(char c)
@@ -28,14 +40,14 @@ int check_str(char *str)
 		i++;
 	if (!str[i])
 	{
-		fprintf(stderr, "Error: Arg not valid\n");
+		ft_putstr_fd("Error: Arg not valid\n", STDERR_FILENO);
 		return (1);
 	}
 	while (str[i])
 	{
 		if (!(str[i] >= '0' && str[i] <= '9'))
 		{
-			fprintf(stderr, "Error: Arg not valid\n");
+			ft_putstr_fd("Error: Arg not valid\n", STDERR_FILENO);
 			return (1);
 		}
 		i++;
@@ -60,10 +72,9 @@ int check_digits(char *str)
 		nb_digits++;
 		i++;
 	}
-
 	if (nb_digits >= 12)
 	{
-		fprintf(stderr, "number to big\n");
+		ft_putstr_fd("number to big\n", STDERR_FILENO);
 		return (1);
 	}
 	return (0);
