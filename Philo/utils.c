@@ -31,31 +31,6 @@ size_t	ft_atoi(char *str)
 	return (r);
 }
 
-void ft_usleep(size_t useconds)
-{
-    size_t start = get_current_time(MSECONDS);
-
-    while ((get_current_time(MSECONDS) - start) < useconds)
-	{
-        usleep(500);
-	}
-}
-
-size_t get_current_time(int flag)
-{
-	struct timeval timestamp;
-	size_t ret;
-
-	ret = 0;
-	gettimeofday(&timestamp, NULL);
-	if (flag == MSECONDS)
-		ret = (timestamp.tv_sec * 1e3) + (timestamp.tv_usec / 1000);
-	else if (flag == USECONDS)
-		ret = (timestamp.tv_sec * 1e6) + (timestamp.tv_usec);
-
-	return (ret);
-}
-
 void  ft_error(t_data *data, char *str)
 {
 	data->exit_status = 1;	

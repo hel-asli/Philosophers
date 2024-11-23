@@ -3,9 +3,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = #-fsanitize=thread -lpthread
 RM = rm -f
-MSRCS = main.c parsing_utils.c utils.c philo_utils.c \
-		mutex_encapulate.c monitor.c philo_routine.c \
-		data_init.c
+MSRCS = main.c parsing_utils.c utils.c philo_utils.c
 MOBJS = ${MSRCS:.c=.o}
 
 all : $(NAME)

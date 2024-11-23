@@ -16,12 +16,10 @@ void safe_print_msg(t_philo *philo, t_msg state)
 {
     size_t current_time;
     size_t elapsed_time;
-	int		end;
 
     current_time = get_current_time(MSECONDS);
     elapsed_time = current_time - philo->data->start_time;
-	end = end_mutex_getter(philo->data);
-    if (!end)
+    if (!is_finish(philo->data))
     {
         pthread_mutex_lock(&philo->data->msg_lock);
         if (state == FORK)
@@ -36,4 +34,3 @@ void safe_print_msg(t_philo *philo, t_msg state)
         pthread_mutex_unlock(&philo->data->msg_lock);
     }
 }
-
