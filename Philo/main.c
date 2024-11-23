@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/23 01:48:40 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/23 19:35:08 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,16 @@ void eat_phase(t_philo *philo)
     	pthread_mutex_lock(philo->left_fork);
     	safe_print_msg(philo, FORK);
     }
-	
+
+	if (is_finish(philo->data))	
+	{
+    	pthread_mutex_unlock(philo->left_fork);
+    	pthread_mutex_unlock(philo->right_fork);
+		return ;
+	}
 	pthread_mutex_lock(&philo->data->last_meal_lock);
-	philo->last_meal_time = get_current_time(MSECONDS);
+	size_t c = get_current_time(MSECONDS);
+	philo->last_meal_time = c;
 	pthread_mutex_unlock(&philo->data->last_meal_lock);
 
     safe_print_msg(philo, EATING);
@@ -95,18 +102,22 @@ void *philo_routine(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
 
+	if (philo->philo_id % 2 == 1)
+		usleep(100);
+
     while (!is_finish(philo->data) && !is_full(philo))
     {
 		if (philo->data->nb_philos == 1)
 			edge_case(philo);
 		else
         	eat_phase(philo);
-		if (is_finish(philo->data))
-			break ;
 
 		pthread_mutex_lock(&philo->data->nb_meals_lock);
 		philo->nb_meals++;
 		pthread_mutex_unlock(&philo->data->nb_meals_lock);
+
+		if (is_finish(philo->data))
+			break ;
 
         sleep_phase(philo);
 		if (is_finish(philo->data))
@@ -222,9 +233,9 @@ void *monitor_job(void *arg)
 		{
 			c = get_current_time(MSECONDS);
 
+
 			pthread_mutex_lock(&philo->data->last_meal_lock);
 			last_meal = c - philo[i].last_meal_time;
-			pthread_mutex_unlock(&philo->data->last_meal_lock);
 
 			if (last_meal >= philo->data->time_die)
 			{
@@ -237,8 +248,10 @@ void *monitor_job(void *arg)
 					pthread_mutex_unlock(&philo->data->msg_lock);
 				}
 				pthread_mutex_unlock(&philo->data->end_lock);
+				pthread_mutex_unlock(&philo->data->last_meal_lock);
 				return (NULL);
 			}
+			pthread_mutex_unlock(&philo->data->last_meal_lock);
 
 
 			// nb meals check .
@@ -266,9 +279,9 @@ void *monitor_job(void *arg)
 int philo_create(t_data *data)
 {
 	t_philo *philo;
-	pthread_attr_t monitor_attr;
-	pthread_attr_init(&monitor_attr);
-	pthread_attr_setdetachstate(&monitor_attr, PTHREAD_CREATE_DETACHED);
+	// pthread_attr_t monitor_attr;
+	// pthread_attr_init(&monitor_attr);
+	// pthread_attr_setdetachstate(&monitor_attr, PTHREAD_CREATE_DETACHED);
 	size_t i;
 
 	i = 0;
@@ -292,13 +305,14 @@ int philo_create(t_data *data)
     }
 
     i = 0;
-	pthread_create(&data->monitor, &monitor_attr, monitor_job, philo);
 	while (i < data->nb_philos)
 	{
 		if (pthread_create(&philo[i].tid, NULL, philo_routine, &philo[i]))
 			return (1);
 		i++;
 	}
+	pthread_create(&data->monitor, NULL, monitor_job, philo);
+
 	for (size_t i = 0; i < data->nb_philos; i++)
 	{
 		if (pthread_join(philo[i].tid, NULL))
@@ -309,6 +323,7 @@ int philo_create(t_data *data)
 			return (1);
 		}
 	}
+	pthread_join(data->monitor, NULL);
 	return (0);
 }
 
