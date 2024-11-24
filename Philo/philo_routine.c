@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 02:55:57 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 22:20:33 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 00:45:33 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ void	*philo_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	// if (philo->philo_id % 2 == 1)
-	// 	usleep(100);
+	if (philo->philo_id % 2 == 1)
+		precise_usleep(philo->data->time_eat);
 	while (!end_mutex_getter(philo->data) && !full_mutex_getter(philo))
 	{
 		if (philo->data->nb_philos == 1)
