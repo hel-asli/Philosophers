@@ -1,15 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_utils.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/24 02:55:20 by hel-asli          #+#    #+#             */
+/*   Updated: 2024/11/24 02:55:24 by hel-asli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-bool is_space(char c)
+bool	is_space(char c)
 {
 	return (c == ' ' || c == '\t');
 }
 
-int count_words(char *str)
+int	count_words(char *str)
 {
-	int i = 0;
-	int w = 0;
+	int	i;
+	int	w;
 
+	i = 0;
+	w = 0;
 	while (is_space(str[i]))
 		i++;
 	while (str[i])
@@ -21,9 +35,11 @@ int count_words(char *str)
 	return (w);
 }
 
-int check_str(char *str)
+int	check_str(char *str)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	if (str[i] == '+')
 		i++;
 	if (!str[i])
@@ -43,13 +59,12 @@ int check_str(char *str)
 	return (0);
 }
 
-int check_digits(char *str)
+int	check_digits(char *str)
 {
-	int i;
+	int	i;
 	int	nb_digits;
 
 	i = 0;
-
 	nb_digits = 0;
 	if (str[i] == '+')
 		i++;
@@ -60,7 +75,6 @@ int check_digits(char *str)
 		nb_digits++;
 		i++;
 	}
-
 	if (nb_digits >= 12)
 	{
 		fprintf(stderr, "number to big\n");
@@ -69,16 +83,15 @@ int check_digits(char *str)
 	return (0);
 }
 
-int check_args(char **av)
+int	check_args(char **av)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (av[i])
 	{
 		if (check_str(av[i]) || check_digits(av[i]))
-		{
 			return (1);
-		}
 		i++;
 	}
 	return (0);

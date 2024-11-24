@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 23:28:22 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/23 23:04:31 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/24 02:35:59 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ size_t	ft_atoi(char *str)
 	return (r);
 }
 
-size_t get_current_time(int flag)
+size_t	get_current_time(int flag)
 {
-	struct timeval timestamp;
-	size_t ret;
+	struct timeval	timestamp;
+	size_t			ret;
 
 	ret = 0;
 	gettimeofday(&timestamp, NULL);
@@ -42,19 +42,18 @@ size_t get_current_time(int flag)
 		ret = (timestamp.tv_sec * 1e3) + (timestamp.tv_usec / 1000);
 	else if (flag == USECONDS)
 		ret = (timestamp.tv_sec * 1e6) + (timestamp.tv_usec);
-
 	return (ret);
 }
 
-void  ft_error(t_data *data, char *str)
+void	ft_error(t_data *data, char *str)
 {
-	data->exit_status = 1;	
+	data->exit_status = 1;
 	ft_putstr_fd(str, STDERR_FILENO);
 }
 
-size_t ft_strlen(char *str)
+size_t	ft_strlen(char *str)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (str[i])

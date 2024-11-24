@@ -6,13 +6,13 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 00:01:59 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 00:22:18 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/24 03:00:25 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void destory_mutex(t_data *data, size_t i)
+void	destory_mutex(t_data *data, size_t i)
 {
 	size_t	j;
 
@@ -40,7 +40,7 @@ void	fork_mutex_init(t_data *data)
 	}
 }
 
-t_philo *philo_init(t_data *data)
+t_philo	*philo_init(t_data *data)
 {
 	size_t	i;
 	t_philo	*philo;
@@ -49,8 +49,8 @@ t_philo *philo_init(t_data *data)
 	if (!philo)
 		return (NULL);
 	i = 0;
-    while (i < data->nb_philos)
-    {
+	while (i < data->nb_philos)
+	{
 		philo[i].data = data;
 		philo[i].nb_meals = 0;
 		philo[i].is_full = 0;
@@ -58,27 +58,30 @@ t_philo *philo_init(t_data *data)
 		philo[i].right_fork = &data->forks[(i + 1) % (data->nb_philos)];
 		philo[i].philo_id = i + 1;
 		philo[i].last_meal_time = data->start_time;
-        i++;
-    }
-
+		i++;
+	}
 	return (philo);
 }
 
-void join_threads(t_philo *philo, t_data *data)
+void	join_threads(t_philo *philo, t_data *data)
 {
-	for (size_t i = 0; i < data->nb_philos; i++)
+	size_t	i;
+
+	i = 0;
+	while (i < philo->data->nb_philos)
 	{
 		if (pthread_join(philo[i].tid, NULL))
 			return ;
+		i++;
 	}
 	pthread_join(data->monitor, NULL);
 }
 
-void philo_create(t_data *data)
+void	philo_create(t_data *data)
 {
-	t_philo *philo;
-	size_t i;
-	
+	t_philo	*philo;
+	size_t	i;
+
 	philo = philo_init(data);
 	if (!philo)
 		return ;
@@ -92,15 +95,4 @@ void philo_create(t_data *data)
 	pthread_create(&data->monitor, NULL, monitor_job, philo);
 	join_threads(philo, data);
 	free(philo);
-}
-
-
-int	pthread_init(t_data *data)
-{
-	fork_mutex_init(data);
-	philo_create(data);
-    
-    destory_mutex(data, data->nb_philos);
-    free(data->forks);
-	return (0);
 }
