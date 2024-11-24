@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 22:14:48 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 02:41:09 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/24 22:10:32 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,11 @@ void	safe_print_msg(t_philo *philo, t_msg state)
 {
 	size_t	current_time;
 	size_t	elapsed_time;
-	int		end;
 
 	current_time = get_current_time(MSECONDS);
 	elapsed_time = current_time - philo->data->start_time;
-	end = end_mutex_getter(philo->data);
-	if (!end)
+	pthread_mutex_lock(&philo->data->end_lock);
+	if (!philo->data->end)
 	{
 		pthread_mutex_lock(&philo->data->msg_lock);
 		if (state == FORK)
@@ -35,4 +34,5 @@ void	safe_print_msg(t_philo *philo, t_msg state)
 			printf("%zu %d is thinking\n", elapsed_time, philo->philo_id);
 		pthread_mutex_unlock(&philo->data->msg_lock);
 	}
+	pthread_mutex_unlock(&philo->data->end_lock);
 }

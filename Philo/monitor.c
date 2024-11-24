@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 23:23:28 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 02:28:45 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/24 22:38:49 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	*monitor_job(void *arg)
 			nb_meals_check(&philo[i]);
 			i++;
 		}
-		usleep(100);
+		usleep(300);
 	}
 	return (NULL);
 }
