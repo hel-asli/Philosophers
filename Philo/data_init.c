@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 23:06:22 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/25 03:57:33 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 21:56:24 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	data_init_arg(t_data *data, char **av, int ac)
 {
 	data->end = 0;
+	data->exit_status = 0;
 	data->start_time = get_current_time(MSECONDS);
 	data->nb_must_eat = 0;
 	data->nb_philos = ft_atoi(av[0]);

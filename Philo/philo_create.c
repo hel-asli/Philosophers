@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 00:01:59 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 03:00:25 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 21:46:50 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,21 @@ void	destory_mutex(t_data *data, size_t i)
 	}
 }
 
-void	fork_mutex_init(t_data *data)
+int	fork_mutex_init(t_data *data)
 {
 	size_t	i;
 
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->nb_philos);
 	if (!data->forks)
-		return ;
+		return (1);
 	i = 0;
 	while (i < data->nb_philos)
 	{
 		if (pthread_mutex_init(&data->forks[i], NULL))
-			return ;
+			return (1);
 		i++;
 	}
+	return (0);
 }
 
 t_philo	*philo_init(t_data *data)

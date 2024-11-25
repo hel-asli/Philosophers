@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/25 03:41:42 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 21:49:49 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ void	destroy_data_mutex(t_data *data)
 
 int	pthread_init(t_data *data)
 {
-	fork_mutex_init(data);
+	if (fork_mutex_init(data))
+		return (1);
 	philo_create(data);
 	destory_mutex(data, data->nb_philos);
 	free(data->forks);

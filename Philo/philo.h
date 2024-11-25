@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/25 21:33:25 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 21:50:03 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ size_t	get_current_time(int flag);
 void	safe_print_msg(t_philo *philo, t_msg state);
 int		data_init(t_data *data, char **av, int ac);
 int		pthread_init(t_data *data);
-void	fork_mutex_init(t_data *data);
+int		fork_mutex_init(t_data *data);
 void	destory_mutex(t_data *data, size_t i);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_error(t_data *data, char *str);
