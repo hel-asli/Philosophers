@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/25 03:39:28 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 21:33:25 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ typedef struct s_data
 }	t_data;
 
 bool	is_space(char c);
-int		count_words(char *str);
 int		check_str(char *str);
 int		check_digits(char *str);
 int		check_args(char **av);

@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 02:55:20 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/25 03:40:01 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 21:33:18 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,6 @@
 bool	is_space(char c)
 {
 	return (c == ' ' || c == '\t');
-}
-
-int	count_words(char *str)
-{
-	int	i;
-	int	w;
-
-	i = 0;
-	w = 0;
-	while (is_space(str[i]))
-		i++;
-	while (str[i])
-	{
-		if (!is_space(str[i]) && (!str[i + 1] || is_space(str[i + 1])))
-			w++;
-		i++;
-	}
-	return (w);
 }
 
 int	check_str(char *str)
