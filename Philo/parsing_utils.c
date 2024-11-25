@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 02:55:20 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 02:55:24 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:40:01 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,14 @@ int	check_str(char *str)
 		i++;
 	if (!str[i])
 	{
-		fprintf(stderr, "Error: Arg not valid\n");
+		ft_putstr_fd(NOT_VALID_ERR, STDERR_FILENO);
 		return (1);
 	}
 	while (str[i])
 	{
 		if (!(str[i] >= '0' && str[i] <= '9'))
 		{
-			fprintf(stderr, "Error: Arg not valid\n");
+			ft_putstr_fd(NOT_VALID_ERR, STDERR_FILENO);
 			return (1);
 		}
 		i++;
@@ -77,7 +77,7 @@ int	check_digits(char *str)
 	}
 	if (nb_digits >= 12)
 	{
-		fprintf(stderr, "number to big\n");
+		ft_putstr_fd(BIG_NBR_ERR, STDERR_FILENO);
 		return (1);
 	}
 	return (0);

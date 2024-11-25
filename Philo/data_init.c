@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/23 23:06:22 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 02:36:42 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:43:26 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ int	data_mutex_init(t_data *data)
 int	data_init(t_data *data, char **av, int ac)
 {
 	if (data_init_arg(data, av, ac))
-		return (1);
+		return (0);
 	if (data_mutex_init(data))
-		return (1);
+		return (0);
 	return (1);
 }

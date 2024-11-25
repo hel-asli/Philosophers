@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 03:02:12 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 03:39:28 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ Usage: ./philosophers number_of_philosophers\
 # define NBPHILOS_ERR_MSG "number_of_philosophers not valid\n"
 # define TIME_ERR_MSG "time_to_die, time_to_eat, time_to_sleep \
 must be greather than 60\n"
+# define NOT_VALID_ERR "Error: Arg not valid\n"
+# define BIG_NBR_ERR "Number to big\n"
 
 typedef struct s_data	t_data;
 
