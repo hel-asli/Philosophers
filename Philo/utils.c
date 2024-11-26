@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 23:28:22 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/24 02:35:59 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/25 22:07:17 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ size_t	get_current_time(int flag)
 
 void	ft_error(t_data *data, char *str)
 {
-	data->exit_status = 1;
+	data->exit_status = FAILURE;
 	ft_putstr_fd(str, STDERR_FILENO);
 }
 
