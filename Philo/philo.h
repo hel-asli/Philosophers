@@ -6,12 +6,15 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 06:17:09 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/25 22:13:24 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/26 23:32:57 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
+
+
+
 
 # define ERR_MSG "Error: Invalid arguments.\n\
 Usage: ./philosophers number_of_philosophers\
@@ -99,6 +102,6 @@ void	full_mutex_setter(t_philo *philo, int value);
 void	*monitor_job(void *arg);
 void	*philo_routine(void *arg);
 void	philo_create(t_data *data);
-void	precise_usleep(size_t useconds);
+void	precise_usleep(size_t useconds, t_data *data);
 
 #endif

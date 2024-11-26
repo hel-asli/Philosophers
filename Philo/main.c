@@ -6,18 +6,19 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 07:05:54 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/25 21:49:49 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/26 23:34:00 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	precise_usleep(size_t useconds)
+void	precise_usleep(size_t useconds, t_data *data)
 {
 	size_t	start;
 
 	start = get_current_time(MSECONDS);
-	while ((get_current_time(MSECONDS) - start) < useconds)
+	while ((get_current_time(MSECONDS) - start) < useconds &&
+		!end_mutex_getter(data))
 	{
 		usleep(500);
 	}

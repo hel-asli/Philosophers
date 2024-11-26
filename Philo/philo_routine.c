@@ -6,7 +6,7 @@
 /*   By: hel-asli <hel-asli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/24 02:55:57 by hel-asli          #+#    #+#             */
-/*   Updated: 2024/11/25 05:26:22 by hel-asli         ###   ########.fr       */
+/*   Updated: 2024/11/26 23:32:48 by hel-asli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	eat_phase(t_philo *philo)
 	philo->last_meal_time = get_current_time(MSECONDS);
 	pthread_mutex_unlock(&philo->data->last_meal_lock);
 	safe_print_msg(philo, EATING);
-	precise_usleep(philo->data->time_eat);
+	precise_usleep(philo->data->time_eat, philo->data);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
 }
@@ -45,14 +45,14 @@ void	eat_phase(t_philo *philo)
 void	sleep_phase(t_philo *philo)
 {
 	safe_print_msg(philo, SLEPING);
-	precise_usleep(philo->data->time_sleep);
+	precise_usleep(philo->data->time_sleep, philo->data);
 }
 
 void	edge_case(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
 	safe_print_msg(philo, FORK);
-	precise_usleep(philo->data->time_die);
+	precise_usleep(philo->data->time_die, philo->data);
 	pthread_mutex_unlock(philo->left_fork);
 }
 
@@ -64,7 +64,7 @@ void	*philo_routine(void *arg)
 	if (philo->data->nb_philos == 1)
 		return (edge_case(philo), NULL);
 	if (philo->philo_id % 2 == 1)
-		precise_usleep(philo->data->time_eat);
+		precise_usleep(philo->data->time_eat, philo->data);
 	while (!end_mutex_getter(philo->data) && !full_mutex_getter(philo))
 	{
 		eat_phase(philo);
